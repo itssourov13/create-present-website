@@ -84,6 +84,59 @@ assert.match(newHtml, /Choose an occasion/);
 assert.match(newHtml, /3ox-l-8b88rzc\.js/);
 const rootHtml = await readFile(path.join(DIST, "index.html"), "utf8");
 assert.match(rootHtml, /Build a.*magical|gift they.ll never forget|CreateGiftWebsite/i);
+assert.match(rootHtml, /href="https:\/\/instagram\.com\/md\.sourov\.mondol630"/);
+assert.match(rootHtml, /href="https:\/\/youtube\.com\/@heart_hacker1313"/);
+assert.match(rootHtml, /href="mailto:sourovmondolb@gmail\.com"/);
+assert.match(rootHtml, /href="https:\/\/wa\.me\/8801877060324/);
+
+// Guard the explicitly configured owner contacts/URLs across both visible HTML
+// and embedded client hydration payloads so stale live-site details cannot return.
+const expectedPersonalLinks = [
+  ["index.html", "https://instagram.com/md.sourov.mondol630"],
+  ["index.html", "https://youtube.com/@heart_hacker1313"],
+  ["index.html", "mailto:sourovmondolb@gmail.com"],
+  ["index.html", "https://wa.me/8801877060324"],
+  ["index.html", "Sourov. All rights reserved."],
+  ["index.html", 'href="https://cgw-itssourov13.vercel.app/"'],
+  ["privacy/index.html", "mailto:sourovmondolb@gmail.com"],
+  ["terms/index.html", "mailto:sourovmondolb@gmail.com"],
+  ["refund/index.html", "mailto:sourovmondolb@gmail.com"],
+  ["_next/static/chunks/0nspch0e5y8m_.js", '"8801877060324"']
+];
+for (const [relative, expected] of expectedPersonalLinks) {
+  const contents = await readFile(path.join(DIST, relative), "utf8");
+  assert.ok(contents.includes(expected), relative + " must include configured personal URL/contact: " + expected);
+}
+const socialMetadataRoutes = [
+  "index.html", "new/index.html", "preview/index.html", "create/index.html",
+  "create-anniversary/index.html", "create-proposal/index.html", "create-apology/index.html",
+  "create-custom/index.html", "create-rakhi/index.html", "create-birthday/index.html",
+  "dashboard/index.html", "j/index.html", "terms/index.html", "privacy/index.html", "refund/index.html"
+];
+for (const route of socialMetadataRoutes) {
+  const contents = await readFile(path.join(DIST, route), "utf8");
+  assert.ok(contents.includes("https://instagram.com/md.sourov.mondol630"), route + " Instagram structured metadata");
+  assert.ok(contents.includes("https://youtube.com/@heart_hacker1313"), route + " YouTube structured metadata");
+  assert.ok(contents.includes("https://cgw-itssourov13.vercel.app"), route + " website structured metadata");
+}
+const stalePersonalMarkers = [
+  "instagram.com/adibiwebtech",
+  "youtube.com/channel/UCIrkEEfeno5jdWxhPU_-xhQ",
+  "adibiwebtech@gmail.com",
+  "919328337531",
+  "Adibi Webtech",
+  "creategiftwebsite.com"
+];
+for (const file of templateFiles) {
+  if (!/\.(?:html|js|css|json|webmanifest|txt)$/i.test(file)) continue;
+  const relative = path.relative(path.join(ROOT, "site-template"), file);
+  const contents = await readFile(path.join(DIST, relative), "utf8");
+  for (const stale of stalePersonalMarkers) {
+    assert.ok(!contents.toLowerCase().includes(stale.toLowerCase()),
+      "Stale personal/live-site value " + stale + " remains in " + path.relative(ROOT, file));
+  }
+}
+console.log("PASS: supplied social/contact details and deployment URL verified; stale live-site contact values absent.");
 
 const vercelApi = (await import("../api/unavailable.js")).default;
 function mockResponse() {

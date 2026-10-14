@@ -20,10 +20,12 @@
 ## Publication and hosted verification still required
 - [x] Initialize the local repository on `main` and configure `origin` for `itssourov13/create-present-website`.
 - [x] Create the local initial standalone commit and verify a clean worktree.
-- [ ] User pushes `main` to GitHub with `git push -u origin main`.
-- [ ] Connect/import the GitHub repository in Vercel; root directory should be the repository root.
-- [ ] Confirm a hosted preview deployment and inspect Vercel build/routing logs.
-- [ ] Smoke test hosted /, /new, /preview, /created/demo, /j/TESTID, /api/health and an unknown path.
+- [x] Confirm the baseline main commit is synchronized with origin/main before creating this feature branch.
+- [x] Replace captured social profile, contact email, WhatsApp phone, footer credit, structured website URL and homepage canonical with the supplied values.
+- [x] Extend smoke tests to check owner links on captured routes and fail if old personal/live-site values remain in the generated bundle.
+- [ ] User pushes `feat/personal-social-links` and merges it into `main`.
+- [ ] Deploy the merged commit to the supplied Vercel project and inspect build logs.
+- [ ] Smoke test the hosted personal links plus /, /new, /preview, /created/demo, /j/TESTID, /api/health and an unknown path.
 
 ## Known test coverage gaps
 - Full OAuth/account/database/upload/publish/payment behavior is outside this static reconstruction.

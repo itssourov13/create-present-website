@@ -11,3 +11,5 @@
 - Restored the missing 2_p-ejallkmfs.js chunk referenced by the captured /j/TESTID page.
 - Expanded smoke testing to fail on missing root-relative static assets referenced by local HTML/CSS, and added an explicit chunk-response check.
 - Corrected README and handoff/state docs to match the existing main branch, configured origin, npm ci install command, and user-owned push/deploy steps.
+- Replaced the captured site owner social profiles, support email, WhatsApp contact, footer credit and structured website URLs with Sourov’s supplied links.
+- Set the homepage canonical URL to the supplied Vercel deployment domain and extended smoke tests to verify current contacts and reject stale live-site values.

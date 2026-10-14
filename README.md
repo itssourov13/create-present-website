@@ -35,15 +35,15 @@ The Vercel project configuration is already included in `vercel.json`:
 - Static route mappings, local API fallback and security headers are configured.
 - Generated `dist/` and local `.vercel/` metadata are git-ignored.
 
-The local Git repository is already initialized on `main`, and `origin` points to `https://github.com/itssourov13/create-present-website.git`. The initial commit and follow-up fixes are local and have not been pushed. From this directory, push them with:
+The local Git repository is initialized and `origin` points to `https://github.com/itssourov13/create-present-website.git`. To publish the current working branch, review it and push it with:
 
 ```bash
 git status --short --branch
 git log -1 --oneline
-git push -u origin main
+git push -u origin HEAD
 ```
 
-After pushing, import/connect this GitHub repository in Vercel with the Root Directory set to the repository root (this directory's contents). No environment variables or production API credentials are required for this static demo.
+After merging, let the Vercel project build the updated commit and verify its deployed routes and links. The configured Root Directory should be this repository root. No environment variables or production API credentials are required for this static demo.
 
 ## Included routes
 
