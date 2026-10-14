@@ -10,7 +10,7 @@ site-template/ is the complete, self-contained static input bundle. npm run buil
 - scripts/smoke-test.mjs tests route status/content, resource availability, configuration contracts, API method handling, CSP, media byte ranges and path traversal protections.
 
 ## Vercel routing
-vercel.json maps dynamic /created/:id URLs to the local placeholder, /j/:id to a 404 state, /create-birthday to the captured 404 state, /api/* to the unavailable handler, and unmatched paths to 404.html. Security headers are attached at the deployment edge.
+vercel.json maps dynamic /created/:id URLs to the local placeholder, /j/:id to a 404 state, /create-birthday to the captured 404 state, /api/* to the unavailable handler, and unmatched paths to 404.html. The filesystem handling step is intentionally ordered before the final catch-all so committed static assets can still resolve. Vercel's current configuration reference marks the legacy `handle: "filesystem"` route property as deprecated; it remains in this route table to preserve its existing ordered-routing behavior and should be revalidated against the hosted preview before any routing migration. See https://vercel.com/docs/project-configuration/vercel-json. Security headers are attached at the deployment edge.
 
 ## Security boundaries
 The CSP permits only same-origin network requests (plus data/blob resources), disables framing, and blocks external analytics connections. No production key or private backend configuration is needed. UI actions requiring authentication, upload, publish, delete or payment are guarded as local-demo actions.

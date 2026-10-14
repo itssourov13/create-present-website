@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import { readFile, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import net from "node:net";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -28,6 +28,7 @@ for (const relative of [
   "dashboard/index.html", "terms/index.html", "privacy/index.html", "refund/index.html",
   "created/index.html", "j/index.html", "404.html", "local-demo.js",
   "local-disabled-analytics.js", "_next/static/chunks/3ox-l-8b88rzc.js",
+  "_next/static/chunks/2_p-ejallkmfs.js",
   "_next/static/chunks/3klunzeywsa48.css",
   "_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2",
   "giftweblogoo.png", "memory1.png", "memory2.png", "memory3.png", "memory4.png",
@@ -36,6 +37,43 @@ for (const relative of [
 ]) {
   await stat(path.join(DIST, relative));
 }
+
+// Check every local static asset URL embedded in HTML/CSS so the deployed bundle
+// cannot silently omit a referenced chunk, stylesheet, font, image, or media file.
+async function collectFiles(directory) {
+  const files = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const absolute = path.join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...await collectFiles(absolute));
+    else if (entry.isFile()) files.push(absolute);
+  }
+  return files;
+}
+const staticAssetExtension = /\.(?:m?js|css|woff2?|ttf|otf|png|jpe?g|webp|avif|svg|ico|mp3|mp4|webm|webmanifest|json)$/i;
+const templateFiles = await collectFiles(path.join(ROOT, "site-template"));
+const localAssetReferences = new Set();
+for (const file of templateFiles) {
+  if (!/\.(?:html|css)$/i.test(file)) continue;
+  const source = await readFile(file, "utf8");
+  const references = [
+    ...source.matchAll(/(?:src|href|poster)\s*=\s*["']([^"']+)["']/gi)
+  ].map((match) => match[1]);
+  if (file.endsWith(".css")) {
+    references.push(...[...source.matchAll(/url\(\s*["']?([^)"'\s]+)["']?\s*\)/gi)].map((match) => match[1]));
+  }
+  for (const reference of references) {
+    if (!reference.startsWith("/") || reference.startsWith("//")) continue;
+    const pathname = reference.split(/[?#]/, 1)[0];
+    if (!staticAssetExtension.test(pathname)) continue;
+    localAssetReferences.add(pathname);
+    try {
+      await stat(path.join(DIST, pathname.replace(/^\/+/, "")));
+    } catch {
+      assert.fail("Missing local static asset " + pathname + ", referenced by " + path.relative(ROOT, file));
+    }
+  }
+}
+assert.ok(localAssetReferences.has("/_next/static/chunks/2_p-ejallkmfs.js"));
 
 const previewHtml = await readFile(path.join(DIST, "preview/index.html"), "utf8");
 assert.match(previewHtml, /A surprise awaits you/);
@@ -133,6 +171,7 @@ try {
 
   for (const [route, contentType] of [
     ["/_next/static/chunks/3ox-l-8b88rzc.js", /javascript/],
+    ["/_next/static/chunks/2_p-ejallkmfs.js", /javascript/],
     ["/_next/static/chunks/3klunzeywsa48.css", /text\/css/],
     ["/_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2", /font\/woff2/],
     ["/giftweblogoo.png", /image\/png/],
@@ -166,6 +205,6 @@ try {
 }
 console.log("PASS: standalone build manifest, Vercel config and serverless API contract.");
 console.log("PASS: all public routes, route status handling, and static 404 fallback.");
-console.log("PASS: captured assets, fonts, recovered images/audio, and content types.");
+console.log("PASS: " + localAssetReferences.size + " distinct local HTML/CSS asset references resolve; fonts, images/audio, and content types verified.");
 console.log("PASS: CSP/security headers, demo-safe API responses, range support and path containment.");
-console.log("NOTE: Vercel's actual production deployment still requires connecting the GitHub repository.");
+console.log("NOTE: Hosted Vercel build/routing still requires a user-initiated push and preview deployment.");

@@ -29,13 +29,21 @@ Use `PORT=4180 npm start` to change the local port. The local server binds to `1
 The Vercel project configuration is already included in `vercel.json`:
 
 - Framework preset: Other / `null`
-- Install command: `npm install --ignore-scripts`
+- Install command: `npm ci` (matches the committed lockfile and `vercel.json`).
 - Build command: `npm run build`
 - Output directory: `dist`
 - Static route mappings, local API fallback and security headers are configured.
 - Generated `dist/` and local `.vercel/` metadata are git-ignored.
 
-To publish, create an empty GitHub repository, then from this directory initialize Git, create the initial commit and push your chosen default branch. Connect that repository to Vercel with its root set to the repository root. No environment variables or production API credentials are required for this static demo.
+The local Git repository is already initialized on `main`, and `origin` points to `https://github.com/itssourov13/create-present-website.git`. The initial commit and follow-up fixes are local and have not been pushed. From this directory, push them with:
+
+```bash
+git status --short --branch
+git log -1 --oneline
+git push -u origin main
+```
+
+After pushing, import/connect this GitHub repository in Vercel with the Root Directory set to the repository root (this directory's contents). No environment variables or production API credentials are required for this static demo.
 
 ## Included routes
 

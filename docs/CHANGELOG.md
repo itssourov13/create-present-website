@@ -7,4 +7,7 @@
 - Added custom not-found handling, lockfile, git attributes/ignore rules and a standalone README.
 - Expanded smoke tests to validate Vercel configuration, API handler contracts and not-found behavior.
 - Synchronized standalone docs with the verified current state.
-- No Git repository was initialized, no remote configured, and nothing pushed or deployed.
+- Initialized the local Git repository on `main`, configured `origin` for the requested GitHub repository, and created the initial local commit; nothing was pushed or deployed.
+- Restored the missing 2_p-ejallkmfs.js chunk referenced by the captured /j/TESTID page.
+- Expanded smoke testing to fail on missing root-relative static assets referenced by local HTML/CSS, and added an explicit chunk-response check.
+- Corrected README and handoff/state docs to match the existing main branch, configured origin, npm ci install command, and user-owned push/deploy steps.

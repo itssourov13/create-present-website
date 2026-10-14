@@ -15,5 +15,5 @@ The observed /create-birthday response is a 404; /create is the birthday builder
 ## D-005 — Edge headers and explicit routes
 Vercel config carries security headers and ordered route mapping to preserve not-found status codes and keep API traffic isolated.
 
-## D-006 — No push/deploy without user confirmation
-Files are prepared and verified locally. No GitHub remote, repository or production deployment is created by this completion pass.
+## D-006 — Keep push/deploy under user control
+The local Git repository is initialized on `main` and `origin` points to `https://github.com/itssourov13/create-present-website.git`. Commits remain local until the user pushes them. No Vercel project has been linked and no deployment has been created from this workspace.

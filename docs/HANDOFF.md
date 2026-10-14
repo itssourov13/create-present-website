@@ -9,19 +9,15 @@
 Open http://127.0.0.1:4179/preview; set PORT=4180 if needed.
 
 ## GitHub repository root
-Publish the contents of this implementation directory, not the parent claude-codex-handoff folder. A clean repository should contain site-template/, scripts/, api/, docs/, vercel.json, package.json and package-lock.json. Generated dist/ remains ignored.
+The standalone implementation directory is already the local repository root. A clean repository should contain site-template/, scripts/, api/, docs/, vercel.json, package.json and package-lock.json. Generated dist/ remains ignored. The local branch is `main` and `origin` points to `https://github.com/itssourov13/create-present-website.git`.
 
-Suggested first publication commands, after creating an empty repository and substituting its remote URL:
+The local commits are prepared but have not been pushed. From this directory, inspect and push them when ready:
 
-    git init
-    git add .
-    git status --short
-    git commit -m "Prepare standalone reconstruction for Vercel"
-    git branch -M main
-    git remote add origin <YOUR_GITHUB_REPOSITORY_URL>
+    git status --short --branch
+    git log -1 --oneline
     git push -u origin main
 
-Do not copy the angle-bracket placeholder literally. Review git status before committing; do not add the enclosing handoff's recovered forensic assets or manifests to this repository.
+Do not push the enclosing forensic handoff or add its recovered forensic assets/manifests to this standalone repository.
 
 ## Vercel settings
 Import the GitHub repository with its root directory set to the repository root. The committed vercel.json sets npm ci, npm run build, dist output, route handling and response security headers. No environment variables are needed for the static demo.
