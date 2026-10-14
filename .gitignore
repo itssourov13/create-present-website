@@ -1,0 +1,11 @@
+# Generated build output
+/dist/
+/node_modules/
+
+# Vercel local metadata
+/.vercel/
+
+# Local logs / test captures
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,16 @@
+{
+  "name": "creategiftwebsite-reconstruction",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone static reconstruction of the recovered CreateGiftWebsite public frontend.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/server.mjs",
+    "lint": "node --check scripts/build.mjs && node --check scripts/server.mjs && node --check scripts/smoke-test.mjs && node --check api/unavailable.js",
+    "test": "npm run build && npm run lint && node scripts/smoke-test.mjs"
+  }
+}
